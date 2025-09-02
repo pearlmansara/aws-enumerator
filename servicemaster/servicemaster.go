@@ -73,7 +73,18 @@ func (svc *ServiceMaster) control_node() {
 		if svc.result_counter >= len(svc.ApiCalls) {
 			defer close(svc.api_call_result_channel)
 			defer close(svc.api_call_error_channel)
-			fmt.Println(utils.Green("Message: "), utils.Yellow("Successful"), utils.Yellow(strings.ToUpper(svc.SvcName))+utils.Yellow(":"), utils.Green(svc.result_counter-svc.error_counter), utils.Yellow("/"), utils.Red(svc.result_counter))
+			
+			// Calculate successful results (non-error results)
+			successfulResults := svc.result_counter - svc.error_counter
+			
+			// Choose colors based on whether we have successful results > 0
+			if successfulResults > 0 {
+				// Highlight with bright colors when we have findings
+				fmt.Println(utils.Green("Message: "), utils.BrightGreen("Successful"), utils.BrightYellow(strings.ToUpper(svc.SvcName))+utils.BrightYellow(":"), utils.BrightGreen(successfulResults), utils.BrightYellow("/"), utils.Red(svc.result_counter))
+			} else {
+				// Use normal colors when no findings
+				fmt.Println(utils.Green("Message: "), utils.Yellow("Successful"), utils.Yellow(strings.ToUpper(svc.SvcName))+utils.Yellow(":"), utils.Green(successfulResults), utils.Yellow("/"), utils.Red(svc.result_counter))
+			}
 			break
 		}
 
